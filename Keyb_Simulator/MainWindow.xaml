@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Keyb_Simulator"
         mc:Ignorable="d"
-        Title="Keyboard Simulator" Height="450" Width="800">
+        Title="Keyboard Simulator" Height="450" Width="820">
     <Window.Resources>
         <GeometryGroup x:Key="borderRadius">
             <EllipseGeometry RadiusX="0" RadiusY="0" Center="2,0"/>
@@ -22,10 +22,13 @@
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
-        <Style x:Key="KeyButton_text" TargetType="Button">
+        <Style x:Key="KeyButton_text" TargetType="Button" BasedOn="{StaticResource KeyButton}">
             <Setter Property="FontSize" Value="18" />
-            <Setter Property="Margin" Value="2"/>
-        </Style>        
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+        <Style x:Key="KeyButton_space" TargetType="Button" BasedOn="{StaticResource KeyButton_text}">
+            <Setter Property="Background" Value="#f1d384" />
+        </Style>
         <Style x:Key="KeyButton_red" TargetType="Button" BasedOn="{StaticResource KeyButton}">
             <Setter Property="Background" Value="#ff7070" />
         </Style>
@@ -46,6 +49,10 @@
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="56" Height="56"/>
             <RowDefinition MinHeight="68" Height="68"/>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -69,7 +76,9 @@
             
             <Label Grid.Row="0" Grid.Column="2" Content="Сложность" FontSize="14"></Label>
             <Label Grid.Row="0" Grid.Column="2" Content="1" FontSize="14" FontWeight="Bold" Margin="75 0 0 0" Name="l_complexity"></Label>
-            <Slider Grid.Row="0" Grid.Column="3" Minimum="1" Maximum="30" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Orientation="Horizontal" Name="s_complexity" Margin="0 5 0 0" SmallChange="1"/>
+            <Slider Grid.Row="0" Grid.Column="3" 
+                    Minimum="1" Maximum="30" TickPlacement="BottomRight" TickFrequency="1" 
+                    IsSnapToTickEnabled="True" Orientation="Horizontal" Name="s_complexity" Margin="0 5 0 0" SmallChange="1"/>
             <CheckBox Grid.Row="0" Grid.Column="4" Name="cb_cases" Content="Учитывать регистр" Margin="2 5 0 0"></CheckBox>
             <Button Grid.Row="1" Grid.Column="3" Content="Старт" Name="b_start" Margin="2"></Button>
             <Button Grid.Row="1" Grid.Column="4" Content="Стоп" Name="b_stop" IsEnabled="False" Margin="2"></Button>
@@ -84,10 +93,6 @@
         </Grid>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -104,22 +109,142 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="1.8*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Content="_`" Name="b00" Style="{StaticResource KeyButton_red}"/>
-            <Button Grid.Row="0" Grid.Column="1" Content="_1" Name="b1" Style="{StaticResource KeyButton_red}"/>
-            <Button Grid.Row="0" Grid.Column="2" Content="_2" Name="b2" Style="{StaticResource KeyButton_red}"/>
-            <Button Grid.Row="0" Grid.Column="3" Content="_3" Name="b3" Style="{StaticResource KeyButton_yellow}"/>
-            <Button Grid.Row="0" Grid.Column="4" Content="_4" Name="b4" Style="{StaticResource KeyButton_green}"/>
-            <Button Grid.Row="0" Grid.Column="5" Content="_5" Name="b5" Style="{StaticResource KeyButton_blue}"/>
-            <Button Grid.Row="0" Grid.Column="6" Content="_6" Name="b6" Style="{StaticResource KeyButton_blue}"/>
-            <Button Grid.Row="0" Grid.Column="7" Content="_7" Name="b7" Style="{StaticResource KeyButton_vialet}"/>
-            <Button Grid.Row="0" Grid.Column="8" Content="_8" Name="b8" Style="{StaticResource KeyButton_vialet}"/>
-            <Button Grid.Row="0" Grid.Column="9" Content="_9" Name="b9" Style="{StaticResource KeyButton_red}"/>
-            <Button Grid.Row="0" Grid.Column="10" Content="_0" Name="b0" Style="{StaticResource KeyButton_yellow}"/>
-            <Button Grid.Row="0" Grid.Column="11" Content="_-" Name="minus" Style="{StaticResource KeyButton_green}"/>
-            <Button Grid.Row="0" Grid.Column="12" Content="_=" Name="res" Style="{StaticResource KeyButton_green}"/>
-            <Button Grid.Row="0" Grid.Column="13" Content="_Backspace" Name="backspace" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="0" Content="`" Name="Oem3" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="1" Name="D1" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="2" Name="D2" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="3" Name="D3" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="4" Name="D4" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="5" Content="5" Name="D5" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="6" Content="6" Name="D6" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="7" Content="7" Name="D7" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="8" Content="8" Name="D8" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="9" Content="9" Name="D9" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="10" Content="0" Name="D0" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="11" Content="-" Name="OemMinus" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="12" Content="=" Name="OemPlus" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="13" Content="Backspace" Name="Back" Style="{StaticResource KeyButton_text}"/>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="1.3*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="Tab" Name="Tab" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="q" Name="Q" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="w" Name="W" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="e" Name="E" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="r" Name="R" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="5" Content="t" Name="T" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="6" Content="y" Name="Y" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="7" Content="u" Name="U" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="8" Content="i" Name="I" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="9" Content="o" Name="O" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="10" Content="p" Name="P" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="11" Content="[" Name="OemOpenBrackets" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="12" Content="]" Name="Oem6" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="13" Content="\" Name="Oem5" Style="{StaticResource KeyButton_green}"/>
+        </Grid>
+        <Grid Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.9*"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="1.8*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="Caps Look" Name="Capital" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="a" Name="A" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="s" Name="S" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="d" Name="D" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="f" Name="F" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="5" Content="g" Name="G" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="6" Content="h" Name="H" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="7" Content="j" Name="J" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="8" Content="k" Name="K" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="9" Content="l" Name="L" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="10" Content=";" Name="Oem1" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="11" Content="'" Name="OemQuotes" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="12" Content="Enter" Name="Return" Style="{StaticResource KeyButton_text}"/>
+        </Grid>
+        <Grid Grid.Row="5">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.3*"/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="2.3*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="Shift" Name="LeftShift" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="z" Name="Z" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="x" Name="X" Style="{StaticResource KeyButton_yellow}"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="c" Name="C" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="v" Name="V" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="5" Content="b" Name="B" Style="{StaticResource KeyButton_blue}"/>
+            <Button Grid.Row="0" Grid.Column="6" Content="n" Name="N" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="7" Content="m" Name="M" Style="{StaticResource KeyButton_vialet}"/>
+            <Button Grid.Row="0" Grid.Column="8" Content="," Name="OemComma" Style="{StaticResource KeyButton_red}"/>
+            <Button Grid.Row="0" Grid.Column="9" Content="." Name="OemPeriod" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="10" Content="/" Name="OemQuestion" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="11" Content="Shift" Name="RightShift" Style="{StaticResource KeyButton_text}"/>
+        </Grid>
+        <Grid Grid.Row="6">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="4.18*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="Ctrl" Name="LeftControl" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="Win" Name="LWin" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="Alt" Name="System1" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="Space" Name="Space" Style="{StaticResource KeyButton_space}"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="Alt" Name="System2" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="5" Content="Win" Name="RWin" Style="{StaticResource KeyButton_text}"/>
+            <Button Grid.Row="0" Grid.Column="6" Content="Ctrl" Name="RightControl" Style="{StaticResource KeyButton_text}"/>
         </Grid>
     </Grid>
 </Window>
