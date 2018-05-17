@@ -524,7 +524,7 @@ namespace Keyb_Simulator
             msg += $"Колличество ошибок: {errors.ToString()}\r";
             msg += $"Правильность набора { (tbk_userInput.Text.Length - errors) * 100 / baseString.Length } %";
 
-            MessageBox.Show(msg, this.Content.ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(msg, this.Title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CalcSymbols()
