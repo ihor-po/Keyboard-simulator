@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Keyb_Simulator
 {
@@ -21,12 +22,22 @@ namespace Keyb_Simulator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int strLength;
+        private int strLength; //длина строки для текст бокса
 
-        private string baseString;
+        private string baseString; //хранит сформированную строку
+
+        bool isUpper; //флаг большой буквы
+        bool CapsLook; //флаг включения CapsLook
+
+        int errors; //колличество допущенных ошибок
+
+        DispatcherTimer timer; //таймер
+        int sec; //секунды в миллисекундах
+
+        bool isTour; //флаг тура
 
         private const string defaultCharsLowCase = "1234567890qwertyuiopasdfghjklzxcvbnm[],./\\`-=;'";
-        private const string defaultCharsHightCase = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM[],./\\`-=;'";
+        private const string defaultCharsHightCase = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM[],./\\`-=;'";
 
         public MainWindow()
         {
@@ -38,8 +49,17 @@ namespace Keyb_Simulator
         {
             ButtonEnable(false);
 
-            strLength = 70; //длина строки в нижнем регистре 62 символа
+            isUpper = false;
+            CapsLook = false;
+
+            strLength = 65; //длина строки в нижнем регистре 65 символа
             baseString = "";// при инициализации строка пустая
+            errors = 0; //колличество ошибок
+
+            sec = 0;
+
+            timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
 
             s_complexity.ValueChanged += S_complexity_ValueChanged;
             b_start.Click += B_start_Click;
@@ -49,18 +69,37 @@ namespace Keyb_Simulator
 
             cb_cases.Checked += Cb_cases_Checked;
             cb_cases.Unchecked += Cb_cases_Unchecked;
+
+            timer.Tick += Timer_Tick;
             
         }
 
-
-        private void Cb_cases_Unchecked(object sender, RoutedEventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            strLength = 62;
+            sec += 1;
+
+            CalcSymbols();
+
         }
 
+        /// <summary>
+        /// Чек бокс - не выбран
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Cb_cases_Unchecked(object sender, RoutedEventArgs e)
+        {
+            strLength = 65;
+        }
+
+        /// <summary>
+        /// Чек бокс - выбран
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Cb_cases_Checked(object sender, RoutedEventArgs e)
         {
-            strLength = 48; //длина строки в верхнем регистре 
+            strLength = 58; //длина строки в верхнем регистре 
         }
 
         /// <summary>
@@ -90,17 +129,23 @@ namespace Keyb_Simulator
         /// <param name="e"></param>
         private void B_stop_Click(object sender, RoutedEventArgs e)
         {
+            
+            if (isTour)
+            {
+                EndOfCours(false);
+            }
 
             //Обнуление информации
             l_sQuantity.Content = 0.ToString();
             l_sErrors.Content = 0.ToString();
             s_complexity.Value = 1;
             cb_cases.IsChecked = false;
+            cb_cases.IsEnabled = true;
+            s_complexity.IsEnabled = true;
+            s_complexity.Value = 1;
             tbk_example.Text = "";
             tbk_userInput.Text = "";
             baseString = "";
-
-            ButtonEnable(false);
 
             //Блокирование/разблокирование кнопок
             b_start.IsEnabled = true;
@@ -118,11 +163,26 @@ namespace Keyb_Simulator
             b_start.IsEnabled = false;
             b_stop.IsEnabled = true;
 
-            tbk_example.Text = "Создание строки";
+            isTour = true;
+            sec = 0;
+            errors = 0;
 
-            GenerateString((int)s_complexity.Value, defaultCharsLowCase);
+            cb_cases.IsEnabled = false;
+            s_complexity.IsEnabled = false;
+            errors = 0;
+
+            if (cb_cases.IsChecked == true)
+            {
+                GenerateString((int)s_complexity.Value, defaultCharsHightCase);
+            }
+            else
+            {
+                GenerateString((int)s_complexity.Value, defaultCharsLowCase);
+            }
 
             ButtonEnable(true);
+
+            timer.Start();
         }
 
         /// <summary>
@@ -209,6 +269,10 @@ namespace Keyb_Simulator
             }
         }
 
+        /// <summary>
+        /// Обработка нажатия клавиш
+        /// </summary>
+        /// <param name="key"></param>
         private void KeyboardKeyDown (string key)
         {
             int i = 1; //счетчик 
@@ -222,9 +286,30 @@ namespace Keyb_Simulator
                     {
                         if (b.Name == key)
                         {
+                            if (b.Name == "LeftShift" || b.Name == "RightShift")
+                            {
+                                if (isUpper == false)
+                                {
+                                    isUpper = true;
+                                }
+                                else
+                                {
+                                    isUpper = false;
+                                }
+                            }
+                            else if (b.Name == "Capital")
+                            {
+                                if (CapsLook == false)
+                                {
+                                    CapsLook = true;
+                                }
+                                else
+                                {
+                                    CapsLook = false;
+                                }
+                            }
                             b.Opacity = 0.5;
                         }
-                        
                     }
                 }
                 else
@@ -235,7 +320,137 @@ namespace Keyb_Simulator
             }
         }
 
+        /// <summary>
+        /// Обработка отпуска клавиш
+        /// </summary>
+        /// <param name="key"></param>
         private void KeyboardKeyUp(string key)
+        {
+            if (isTour)
+            {
+
+                int i = 1; //счетчик 
+                if (tbk_userInput.Text.Length != strLength)
+                {
+                    foreach (UIElement element in (this.Content as Grid).Children)
+                    {
+
+                        if (element is Grid && i > 2)
+                        {
+                            foreach (Button b in (element as Grid).Children)
+                            {
+                                if (b.Name == key)
+                                {
+                                    tbk_userInput.Focus();
+
+                                    b.Opacity = 1;
+
+                                    if (tbk_userInput.Text.Length < strLength)
+                                    {
+                                        if (b.Name == "Space") //проверка нажатия пробела
+                                        {
+                                            tbk_userInput.Text += " ";
+                                        }
+                                        else if (b.Name == "LeftShift" || b.Name == "RightShift") //проверка нажатия шифтов
+                                        {
+                                            if (isUpper == false)
+                                            {
+                                                isUpper = true;
+                                            }
+                                            else
+                                            {
+                                                isUpper = false;
+                                            }
+                                        }
+                                        else if (b.Name == "Capital")//проверка нажатия капс лука
+                                        {
+                                            if (CapsLook == false)
+                                            {
+                                                KeysToUpper(false);
+                                            }
+                                            else
+                                            {
+                                                KeysToUpper(true);
+                                            }
+                                            continue;
+                                        }
+                                        else if (b.Name == "Tab")
+                                        {
+                                            tbk_userInput.Text += "    ";
+                                        }
+                                        else if (b.Name == "Back")
+                                        {
+                                            if (tbk_userInput.Text.Length > 0)
+                                            {
+                                                tbk_userInput.Text = tbk_userInput.Text.Substring(0, tbk_userInput.Text.Length - 1);
+                                            }
+                                        }
+                                        else if (b.Name == "Return")
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            string s = "";
+
+                                            if (isUpper || CapsLook)
+                                            {
+                                                s = b.Content.ToString().ToUpper();
+                                            }
+                                            else
+                                            {
+                                                s = b.Content.ToString();
+                                            }
+
+                                            int index = tbk_userInput.Text.Length;
+
+                                            if (s == baseString[index].ToString())
+                                            {
+                                                tbk_userInput.Foreground = new SolidColorBrush(Colors.Green);
+                                            }
+                                            else
+                                            {
+                                                tbk_userInput.Foreground = new SolidColorBrush(Colors.Red);
+                                                l_sErrors.Content = (++errors).ToString();
+                                            }
+
+                                            tbk_userInput.Text += s;
+
+                                            if (tbk_userInput.Text.Length == baseString.Length)
+                                            {
+                                                EndOfCours(true);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        EndOfCours(true);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            i++;
+                        }
+
+                    }
+                }
+                else
+                {
+                    EndOfCours(true);
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Перевод клавишь в верхний / нижний регистр
+        /// </summary>
+        /// <param name="status"></param>
+        private void KeysToUpper(bool status)
         {
             int i = 1; //счетчик 
 
@@ -245,32 +460,32 @@ namespace Keyb_Simulator
                 if (element is Grid && i > 2)
                 {
                     foreach (Button b in (element as Grid).Children)
-                    {   
-                        if (b.Name == key)
+                    {
+                        if (b.Name == "Space" ||
+                            b.Name == "LeftShift" ||
+                            b.Name == "RightShift" ||
+                            b.Name == "System1" ||
+                            b.Name == "System2" ||
+                            b.Name == "Capital" ||
+                            b.Name == "Tab" ||
+                            b.Name == "LeftControl" ||
+                            b.Name == "RightControl" ||
+                            b.Name == "RWin" ||
+                            b.Name == "LWin" ||
+                            b.Name == "Return" ||
+                            b.Name == "Back")
                         {
-                            tbk_userInput.Focus();
-
-                            b.Opacity = 1;
-
-                            if (tbk_userInput.Text.Length <= strLength)
-                            {
-                                if (b.Name == "Space")
-                                {
-                                    tbk_userInput.Text += " ";
-                                }
-                                else
-                                {
-                                    tbk_userInput.Text += b.Content;
-                                }
-                                
-                            }
-                            else
-                            {
-                                return;
-                            }
+                            continue;
                         }
-                        
-                        
+
+                        if (status)
+                        {
+                            b.Content = b.Content.ToString().ToUpper();
+                        }
+                        else
+                        {
+                            b.Content = b.Content.ToString().ToLower();
+                        }
                     }
                 }
                 else
@@ -279,6 +494,53 @@ namespace Keyb_Simulator
                 }
 
             }
+        }
+
+        /// <summary>
+        /// Окончание этапа
+        /// </summary>
+        /// <param name="fin"></param>
+        private void EndOfCours(bool fin)
+        {
+            isTour = false;
+
+            timer.Stop();
+            ButtonEnable(false);
+
+            string msg;
+
+            if (fin)
+            {
+                msg = "Вы завершили этап!\r\r";
+            }
+            else
+            {
+                msg = "Вы НЕ завершили этап!\r\r";
+            }
+
+            CalcSymbols();
+
+            msg += $"Ваш результат:\rСкорость набора: {l_sQuantity.Content} симв / мин\r";
+            msg += $"Колличество ошибок: {errors.ToString()}\r";
+            msg += $"Правильность набора { (tbk_userInput.Text.Length - errors) * 100 / baseString.Length } %";
+
+            MessageBox.Show(msg, this.Content.ToString(), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CalcSymbols()
+        {
+            float min = 0;
+
+            int res = tbk_userInput.Text.Length;
+
+            if (sec / 1000 > 60)
+            {
+
+                min = (float)(sec / (float)1000) / (float)60;
+                res = (int)(res / min);
+            }
+
+            l_sQuantity.Content = res.ToString();
         }
     }
 }

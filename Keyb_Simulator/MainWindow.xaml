@@ -21,6 +21,7 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="IsTabStop" Value="False"/>
         </Style>
         <Style x:Key="KeyButton_text" TargetType="Button" BasedOn="{StaticResource KeyButton}">
             <Setter Property="FontSize" Value="18" />
@@ -78,10 +79,11 @@
             <Label Grid.Row="0" Grid.Column="2" Content="1" FontSize="14" FontWeight="Bold" Margin="75 0 0 0" Name="l_complexity"></Label>
             <Slider Grid.Row="0" Grid.Column="3" 
                     Minimum="1" Maximum="30" TickPlacement="BottomRight" TickFrequency="1" 
-                    IsSnapToTickEnabled="True" Orientation="Horizontal" Name="s_complexity" Margin="0 5 0 0" SmallChange="1"/>
-            <CheckBox Grid.Row="0" Grid.Column="4" Name="cb_cases" Content="Учитывать регистр" Margin="2 5 0 0"></CheckBox>
-            <Button Grid.Row="1" Grid.Column="3" Content="Старт" Name="b_start" Margin="2"></Button>
-            <Button Grid.Row="1" Grid.Column="4" Content="Стоп" Name="b_stop" IsEnabled="False" Margin="2"></Button>
+                    IsSnapToTickEnabled="True" Orientation="Horizontal" Name="s_complexity" Margin="0 5 0 0" SmallChange="1"
+                    IsTabStop="False"/>
+            <CheckBox Grid.Row="0" Grid.Column="4" Name="cb_cases" Content="Учитывать регистр" Margin="2 5 0 0" IsTabStop="False"></CheckBox>
+            <Button Grid.Row="1" Grid.Column="3" Content="Старт" Name="b_start" Margin="2" IsTabStop="False"></Button>
+            <Button Grid.Row="1" Grid.Column="4" Content="Стоп" Name="b_stop" IsEnabled="False" Margin="2" IsTabStop="False"></Button>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -221,7 +223,7 @@
             <Button Grid.Row="0" Grid.Column="6" Content="n" Name="N" Style="{StaticResource KeyButton_vialet}"/>
             <Button Grid.Row="0" Grid.Column="7" Content="m" Name="M" Style="{StaticResource KeyButton_vialet}"/>
             <Button Grid.Row="0" Grid.Column="8" Content="," Name="OemComma" Style="{StaticResource KeyButton_red}"/>
-            <Button Grid.Row="0" Grid.Column="9" Content="." Name="OemPeriod" Style="{StaticResource KeyButton_green}"/>
+            <Button Grid.Row="0" Grid.Column="9" Content="." Name="OemPeriod" Style="{StaticResource KeyButton_yellow}"/>
             <Button Grid.Row="0" Grid.Column="10" Content="/" Name="OemQuestion" Style="{StaticResource KeyButton_green}"/>
             <Button Grid.Row="0" Grid.Column="11" Content="Shift" Name="RightShift" Style="{StaticResource KeyButton_text}"/>
         </Grid>
