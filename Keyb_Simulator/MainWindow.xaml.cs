@@ -52,7 +52,7 @@ namespace Keyb_Simulator
             isUpper = false;
             CapsLook = false;
 
-            strLength = 65; //длина строки в нижнем регистре 65 символа
+            strLength = 60; //длина строки в нижнем регистре 65 символа
             baseString = "";// при инициализации строка пустая
             errors = 0; //колличество ошибок
 
@@ -89,7 +89,7 @@ namespace Keyb_Simulator
         /// <param name="e"></param>
         private void Cb_cases_Unchecked(object sender, RoutedEventArgs e)
         {
-            strLength = 65;
+            strLength = 60;
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Keyb_Simulator
         /// <param name="e"></param>
         private void Cb_cases_Checked(object sender, RoutedEventArgs e)
         {
-            strLength = 58; //длина строки в верхнем регистре 
+            strLength = 53; //длина строки в верхнем регистре 
         }
 
         /// <summary>
@@ -328,7 +328,6 @@ namespace Keyb_Simulator
         {
             if (isTour)
             {
-
                 int i = 1; //счетчик 
                 if (tbk_userInput.Text.Length != strLength)
                 {
@@ -349,7 +348,7 @@ namespace Keyb_Simulator
                                     {
                                         if (b.Name == "Space") //проверка нажатия пробела
                                         {
-                                            tbk_userInput.Text += " ";
+                                            AddUserChar(" ");
                                         }
                                         else if (b.Name == "LeftShift" || b.Name == "RightShift") //проверка нажатия шифтов
                                         {
@@ -402,25 +401,7 @@ namespace Keyb_Simulator
                                                 s = b.Content.ToString();
                                             }
 
-                                            int index = tbk_userInput.Text.Length;
-
-                                            if (s == baseString[index].ToString())
-                                            {
-                                                tbk_userInput.Foreground = new SolidColorBrush(Colors.Green);
-                                            }
-                                            else
-                                            {
-                                                tbk_userInput.Foreground = new SolidColorBrush(Colors.Red);
-                                                l_sErrors.Content = (++errors).ToString();
-                                            }
-
-                                            tbk_userInput.Text += s;
-
-                                            if (tbk_userInput.Text.Length == baseString.Length)
-                                            {
-                                                EndOfCours(true);
-                                                return;
-                                            }
+                                            AddUserChar(s);
                                         }
                                     }
                                     else
@@ -527,6 +508,9 @@ namespace Keyb_Simulator
             MessageBox.Show(msg, this.Title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        /// <summary>
+        /// Подсчет скорости набора
+        /// </summary>
         private void CalcSymbols()
         {
             float min = 0;
@@ -541,6 +525,92 @@ namespace Keyb_Simulator
             }
 
             l_sQuantity.Content = res.ToString();
+        }
+
+        /// <summary>
+        /// Создание форматированного текста для вывода
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="_char"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        private Span FormatingText (int index, string _char, bool error)
+        {
+            Span res = new Span();
+            Span _baseString = new Span();
+            var tmp = new Span();
+
+            var startText = new Span(new Run(tbk_example.Text.ToString().Substring(0, index)))
+            {
+                Background = Brushes.Green,
+                Foreground = Brushes.White
+            };
+
+            string endOfText = tbk_example.Text.ToString().Substring(index + 1, tbk_example.Text.Length - index - 1);
+
+            var bChar = new Span(new Run(tbk_example.Text[index].ToString()))
+            {
+                Background = Brushes.Green,
+                Foreground = Brushes.White
+            };
+
+            if (!error)
+            {
+                tmp = new Span(new Run(_char))
+                {
+                    Background = Brushes.Green,
+                    Foreground = Brushes.White
+                };
+            }
+            else
+            {
+                tmp = new Span(new Run(_char))
+                {
+                    Background = Brushes.Red,
+                    Foreground = Brushes.White,
+                    FontWeight = FontWeights.Bold
+                };
+            }
+
+            _baseString.Inlines.Add(startText);
+            _baseString.Inlines.Add(bChar);
+            _baseString.Inlines.Add(endOfText);
+
+            tbk_example.Inlines.Clear();
+            tbk_example.Inlines.Add(_baseString);
+            
+            res.Inlines.Add(tmp);
+            
+            return res;
+        }
+
+        /// <summary>
+        /// Добавление вводимого символа в строку
+        /// </summary>
+        /// <param name="s"></param>
+        private void AddUserChar (string s)
+        {
+            int index = tbk_userInput.Text.Length;
+
+            var span = new Span();
+
+            if (s == baseString[index].ToString())
+            {
+                span = FormatingText(index, s, false);
+            }
+            else
+            {
+                span = FormatingText(index, s, true);
+                l_sErrors.Content = (++errors).ToString();
+            }
+
+            tbk_userInput.Inlines.Add(span);
+
+            if (tbk_userInput.Text.Length == baseString.Length)
+            {
+                EndOfCours(true);
+                return;
+            }
         }
     }
 }
